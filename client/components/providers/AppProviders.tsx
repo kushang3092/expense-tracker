@@ -1,0 +1,17 @@
+"use client";
+
+import { SessionProvider } from "next-auth/react";
+import type { ReactNode } from "react";
+import { Provider } from "react-redux";
+
+import { store } from "@/store";
+
+export function AppProviders({ children }: { children: ReactNode }) {
+  return (
+    <Provider store={store}>
+      <SessionProvider refetchOnWindowFocus={false} refetchInterval={0} refetchWhenOffline={false}>
+        {children}
+      </SessionProvider>
+    </Provider>
+  );
+}
