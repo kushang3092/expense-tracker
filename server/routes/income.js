@@ -2,18 +2,26 @@ const express = require("express")
 
 const Income = require("../schemas/Income")
 const { protect } = require("../middleware/auth")
+const { getSignedReceiptUrl } = require("../utils/s3")
 
 const router = express.Router()
 
 router.use(protect)
 
 router.get("/", async (req, res) => {
-  const income = await Income.find({ userId: req.user.id }).sort({ date: -1, createdAt: -1 })
-  res.json({ income })
+  const income = await Income.find({ userId: req.user.id }).sort({ date: -1, createdAt: -1 }).lean()
+  const serializedIncome = await Promise.all(
+    income.map(async (item) => ({
+      ...item,
+      receiptUrl: item.receiptUrl ? await getSignedReceiptUrl(item.receiptUrl) : null,
+    }))
+  )
+
+  res.json({ income: serializedIncome })
 })
 
 router.post("/", async (req, res) => {
-  const { amount, source, description, date } = req.body
+  const { amount, source, description, date, receiptUrl } = req.body
 
   if (amount === undefined || amount === null || !source) {
     return res.status(400).json({ message: "Amount and source are required." })
@@ -25,6 +33,7 @@ router.post("/", async (req, res) => {
     source,
     description,
     date,
+    receiptUrl,
   })
 
   return res.status(201).json({ income })

@@ -11,6 +11,15 @@ type CreateIncomeArg = AuthArg & {
   source: string;
   description: string;
   date: string;
+  receiptUrl?: string;
+};
+
+type UpdateIncomeArg = CreateIncomeArg & {
+  id: string;
+};
+
+type DeleteIncomeArg = AuthArg & {
+  id: string;
 };
 
 export const incomeApi = baseApi.injectEndpoints({
@@ -36,7 +45,34 @@ export const incomeApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["Analytics", "Income"],
     }),
+    updateIncome: builder.mutation<{ income: IncomeItem }, UpdateIncomeArg>({
+      query: ({ token, id, ...body }) => ({
+        url: `/api/income/${id}`,
+        method: "PUT",
+        body,
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      }),
+      invalidatesTags: ["Analytics", "Income"],
+    }),
+    deleteIncome: builder.mutation<{ message: string }, DeleteIncomeArg>({
+      query: ({ token, id }) => ({
+        url: `/api/income/${id}`,
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }),
+      invalidatesTags: ["Analytics", "Income"],
+    }),
   }),
 });
 
-export const { useCreateIncomeMutation, useGetIncomeQuery } = incomeApi;
+export const {
+  useCreateIncomeMutation,
+  useDeleteIncomeMutation,
+  useGetIncomeQuery,
+  useUpdateIncomeMutation,
+} = incomeApi;

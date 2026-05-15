@@ -23,6 +23,10 @@ const incomeSchema = new mongoose.Schema(
       default: "",
       trim: true,
     },
+    receiptUrl: {
+      type: String,
+      default: null,
+    },
     date: {
       type: Date,
       required: true,

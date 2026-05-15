@@ -49,6 +49,7 @@ export function DashboardClient() {
   const selectedCategory = useAppSelector((state) => state.dashboard.selectedCategory);
 
   const [expenseReceipt, setExpenseReceipt] = useState<File | null>(null);
+  const [incomeReceipt, setIncomeReceipt] = useState<File | null>(null);
   const [expenseError, setExpenseError] = useState("");
   const [incomeError, setIncomeError] = useState("");
   const [budgetError, setBudgetError] = useState("");
@@ -123,15 +124,30 @@ export function DashboardClient() {
     const formData = new FormData(form);
     if (!token) return;
 
+    const payload: {
+      token: string;
+      amount: number;
+      source: string;
+      description: string;
+      date: string;
+      receiptUrl?: string;
+    } = {
+      token,
+      amount: Number(formData.get("amount")),
+      source: String(formData.get("source")),
+      description: String(formData.get("description") || ""),
+      date: String(formData.get("date") || new Date().toISOString()),
+    };
+
     try {
-      await createIncome({
-        token,
-        amount: Number(formData.get("amount")),
-        source: String(formData.get("source")),
-        description: String(formData.get("description") || ""),
-        date: String(formData.get("date") || new Date().toISOString()),
-      }).unwrap();
+      if (incomeReceipt) {
+        const upload = await uploadReceipt(incomeReceipt, token);
+        payload.receiptUrl = upload.receiptKey;
+      }
+      
+      await createIncome(payload).unwrap();
       setIncomeError("");
+      setIncomeReceipt(null);
       form.reset();
     } catch (error) {
       setIncomeError(error instanceof Error ? error.message : "Unable to save income.");
@@ -177,7 +193,7 @@ export function DashboardClient() {
       <div className="flex flex-col gap-4 rounded-[1.5rem] bg-slate-900 px-4 py-5 text-white shadow-[0_30px_80px_rgba(15,23,42,0.25)] sm:rounded-[2rem] sm:px-6 sm:py-6 md:flex-row md:items-end md:justify-between">
         <div className="min-w-0">
           <p className="text-xs uppercase tracking-[0.22em] text-teal-300 sm:text-sm sm:tracking-[0.3em]">Xpense Tracker</p>
-          <h1 className="mt-2 text-2xl font-semibold sm:text-3xl">Welcome back, {session.user?.name || "there"}.</h1>
+          {/* <h1 className="mt-2 text-2xl font-semibold sm:text-3xl">Welcome back, {session.user?.name || "there"}.</h1> */}
           <p className="mt-2 max-w-2xl text-sm text-slate-300">
             Monitor spending, income, budgets, receipts, and monthly trends from one dashboard.
           </p>
@@ -255,7 +271,7 @@ export function DashboardClient() {
         </div>
 
         <DistributionCard
-          title="Expense mix"
+          title="Expenses"
           subtitle="Categories"
           monthLabel={categoryDistributionQuery.data?.label || "Selected month"}
           months={categoryDistributionQuery.data?.availableMonths || []}
@@ -266,7 +282,7 @@ export function DashboardClient() {
         />
 
         <DistributionCard
-          title="Income mix"
+          title="Income"
           subtitle="Sources"
           monthLabel={incomeSourceDistributionQuery.data?.label || "Selected month"}
           months={incomeSourceDistributionQuery.data?.availableMonths || []}
@@ -304,6 +320,7 @@ export function DashboardClient() {
             <input name="source" placeholder="Source" className="input" required />
             <input name="description" placeholder="Description" className="input" />
             <input name="date" type="date" className="input" />
+            <input type="file" accept="image/*,.pdf,.doc,.docx" onChange={(event) => setIncomeReceipt(event.target.files?.[0] || null)} className="block w-full min-w-0 overflow-hidden rounded-xl border border-slate-300 bg-gray-100 px-3 py-2 text-sm text-slate-500" />
             {incomeError ? <p className="text-sm text-rose-600">{incomeError}</p> : null}
             <button type="submit" className="button-dark" disabled={incomeMutation.isLoading}>
               {incomeMutation.isLoading ? "Saving..." : "Save income"}
@@ -347,7 +364,7 @@ export function DashboardClient() {
           </div>
         </InfoCard>
 
-        <InfoCard title="Recent expenses" href="/dashboard/expenses">
+        <InfoCard title="Recent expenses" href="/expenses">
           
           <div className="mb-4 flex items-center justify-between gap-3">
             <div className="flex flex-wrap gap-2">
@@ -380,7 +397,7 @@ export function DashboardClient() {
           </div>
         </InfoCard>
 
-        <InfoCard title="Recent income">
+        <InfoCard title="Recent income" href="/incomes">
           <div className="grid gap-3">
             {latestIncome.map((item) => (
               <RecordRow
@@ -460,7 +477,7 @@ function DistributionCard({
     <div className="min-w-0 rounded-[1.5rem] border border-slate-200 bg-white p-4 shadow-sm sm:rounded-[2rem] sm:p-6">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div className="min-w-0">
-          <p className="text-xs uppercase tracking-[0.2em] text-teal-700 sm:text-sm sm:tracking-[0.25em]">Mix</p>
+          {/* <p className="text-xs uppercase tracking-[0.2em] text-teal-700 sm:text-sm sm:tracking-[0.25em]">Mix</p> */}
           <h2 className="text-xl font-semibold text-slate-900">{title}</h2>
           <p className="mt-1 text-sm text-slate-500">
             {subtitle} for {monthLabel}
@@ -554,9 +571,9 @@ function InfoCard({ title, href, children }: { title: string; href?: string; chi
     <div className="min-w-0 rounded-[1.5rem] border border-slate-200 bg-white p-4 shadow-sm sm:rounded-[2rem] sm:p-5">
       <div className="flex flex-wrap items-center justify-between gap-3">
       <h2 className="text-lg font-semibold text-slate-900">{title}</h2>
-      {title === "Recent expenses" && href ? (
+      {href ? (
         <Link
-          href="/expenses"
+          href={href}
           className="rounded-xl border border-slate-200 px-3 py-1.5 text-sm font-medium text-slate-700 transition bg-gray-500 hover:border-slate-300 hover:bg-gray-600 text-white"
         >
           View all

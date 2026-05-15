@@ -49,6 +49,7 @@ export type IncomeItem = {
   source: string;
   description: string;
   date: string;
+  receiptUrl?: string | null;
   createdAt: string;
 };
 
