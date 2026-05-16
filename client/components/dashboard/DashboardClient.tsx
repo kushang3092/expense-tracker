@@ -352,7 +352,23 @@ export function DashboardClient() {
             </select>
             <textarea name="description" placeholder="Description" className="input resize-none" rows={2} />
             <input name="date" type="date" className="input" />
-            <input type="file" accept="image/*" onChange={(event) => setExpenseReceipt(event.target.files?.[0] || null)} className="block w-full min-w-0 overflow-hidden rounded-xl border border-slate-300 bg-gray-100 px-3 py-2 text-sm text-slate-500" />
+            <div className="flex gap-2">
+              <label className="flex-1 cursor-pointer rounded-xl border border-slate-300 bg-gray-100 flex items-center justify-center py-2 transition hover:bg-gray-200">
+                <input type="file" className="hidden" accept="image/*" onChange={(event) => setExpenseReceipt(event.target.files?.[0] || null)} />
+                <span className="text-sm font-medium text-slate-500 flex items-center gap-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
+                  Upload File
+                </span>
+              </label>
+              <label className="flex-1 cursor-pointer rounded-xl border border-slate-300 bg-gray-100 flex items-center justify-center py-2 transition hover:bg-gray-200">
+                <input type="file" className="hidden" accept="image/*" capture="environment" onChange={(event) => setExpenseReceipt(event.target.files?.[0] || null)} />
+                <span className="text-sm font-medium text-slate-500 flex items-center gap-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>
+                  Camera
+                </span>
+              </label>
+            </div>
+            {expenseReceipt && <p className="text-xs text-teal-700 truncate px-1 font-medium">Selected: {expenseReceipt.name}</p>}
             {expenseError ? <p className="text-sm text-rose-600">{expenseError}</p> : null}
             <button type="submit" className="button-dark" disabled={expenseMutation.isLoading}>
               {expenseMutation.isLoading ? "Saving..." : "Save expense"}
@@ -366,7 +382,23 @@ export function DashboardClient() {
             <input name="source" placeholder="Source" className="input" required />
             <textarea name="description" placeholder="Description" className="input resize-none" rows={2} />
             <input name="date" type="date" className="input" />
-            <input type="file" accept="image/*,.pdf,.doc,.docx" onChange={(event) => setIncomeReceipt(event.target.files?.[0] || null)} className="block w-full min-w-0 overflow-hidden rounded-xl border border-slate-300 bg-gray-100 px-3 py-2 text-sm text-slate-500" />
+            <div className="flex gap-2">
+              <label className="flex-1 cursor-pointer rounded-xl border border-slate-300 bg-gray-100 flex items-center justify-center py-2 transition hover:bg-gray-200">
+                <input type="file" className="hidden" accept="image/*,.pdf,.doc,.docx" onChange={(event) => setIncomeReceipt(event.target.files?.[0] || null)} />
+                <span className="text-sm font-medium text-slate-500 flex items-center gap-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
+                  Upload File
+                </span>
+              </label>
+              <label className="flex-1 cursor-pointer rounded-xl border border-slate-300 bg-gray-100 flex items-center justify-center py-2 transition hover:bg-gray-200">
+                <input type="file" className="hidden" accept="image/*" capture="environment" onChange={(event) => setIncomeReceipt(event.target.files?.[0] || null)} />
+                <span className="text-sm font-medium text-slate-500 flex items-center gap-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>
+                  Camera
+                </span>
+              </label>
+            </div>
+            {incomeReceipt && <p className="text-xs text-teal-700 truncate px-1 font-medium">Selected: {incomeReceipt.name}</p>}
             {incomeError ? <p className="text-sm text-rose-600">{incomeError}</p> : null}
             <button type="submit" className="button-dark" disabled={incomeMutation.isLoading}>
               {incomeMutation.isLoading ? "Saving..." : "Save income"}
