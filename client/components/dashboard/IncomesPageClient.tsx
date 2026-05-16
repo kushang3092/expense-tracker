@@ -168,7 +168,7 @@ export function IncomesPageClient() {
             {incomeError ? <p className="mt-2 text-sm text-rose-600">{incomeError}</p> : null}
           </div>
 
-          <div className="grid w-full gap-3 sm:grid-cols-3 lg:max-w-2xl">
+          <div className="grid w-full grid-cols-2 gap-3 sm:grid-cols-3 lg:max-w-2xl">
             <label className="grid gap-2">
               <span className="text-xs font-medium uppercase tracking-[0.16em] text-slate-500">Source</span>
               <select
@@ -199,7 +199,7 @@ export function IncomesPageClient() {
               </select>
             </label>
 
-            <label className="grid gap-2">
+            <label className="grid gap-2 col-span-2 sm:col-span-1">
               <span className="text-xs font-medium uppercase tracking-[0.16em] text-slate-500">Sort by amount</span>
               <select
                 value={amountSort}

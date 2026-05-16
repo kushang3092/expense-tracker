@@ -189,8 +189,8 @@ export function DashboardClient() {
   }
 
   return (
-    <div className="min-w-0 space-y-6 md:space-y-8">
-      <div className="flex flex-col gap-4 rounded-[1.5rem] bg-slate-900 px-4 py-5 text-white shadow-[0_30px_80px_rgba(15,23,42,0.25)] sm:rounded-[2rem] sm:px-6 sm:py-6 md:flex-row md:items-end md:justify-between">
+    <div className="flex flex-col min-w-0 gap-6 md:gap-8">
+      <div className="order-1 flex flex-row items-center justify-between gap-4 rounded-[1.5rem] bg-slate-900 px-4 py-5 text-white shadow-[0_30px_80px_rgba(15,23,42,0.25)] sm:rounded-[2rem] sm:px-6 sm:py-6">
         <div className="min-w-0">
           <p className="text-xs uppercase tracking-[0.22em] text-teal-300 sm:text-sm sm:tracking-[0.3em]">Xpense Tracker</p>
           {/* <h1 className="mt-2 text-2xl font-semibold sm:text-3xl">Welcome back, {session.user?.name || "there"}.</h1> */}
@@ -198,22 +198,22 @@ export function DashboardClient() {
             Monitor spending, income, budgets, receipts, and monthly trends from one dashboard.
           </p>
         </div>
-        <div className="relative self-start md:self-auto">
+        <div className="relative shrink-0">
           <button
             type="button"
             onClick={() => setIsProfileMenuOpen((open) => !open)}
-            className="flex items-center gap-3 rounded-full border border-white/20 bg-white/10 px-2 py-2 text-left text-white transition hover:border-white/40 hover:bg-white/15 cursor-pointer"
+            className="flex h-12 w-12 items-center justify-center rounded-full border border-white/20 bg-white/10 p-1 text-white transition hover:border-white/40 hover:bg-white/15 cursor-pointer"
           >
             {session.user?.image ? (
               <Image
                 src={session.user.image}
                 alt={session.user?.name || "Profile"}
-                className="h-10 w-10 rounded-full object-cover"
-                height={100}
-                width={100}
+                className="h-full w-full rounded-full object-cover"
+                height={48}
+                width={48}
               />
             ) : (
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-teal-500 text-sm font-semibold text-white">
+              <div className="flex h-full w-full items-center justify-center rounded-full bg-teal-500 text-sm font-semibold text-white">
                 {getInitials(session.user?.name, session.user?.email)}
               </div>
             )}
@@ -224,33 +224,52 @@ export function DashboardClient() {
           </button>
 
           {isProfileMenuOpen ? (
-            <div className="absolute left-0 top-full z-20 mt-3 w-[min(18rem,calc(100vw-2rem))] overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-[0_20px_60px_rgba(15,23,42,0.18)] sm:left-auto sm:right-0">
-              <div className="border-b border-slate-100 px-5 py-4">
-                <p className="font-medium text-slate-900">{session.user?.name || "User"}</p>
-                <p className="mt-1 text-sm text-slate-500">{session.user?.email || "No email available"}</p>
+            <>
+              <div 
+                className="fixed inset-0 z-10" 
+                onClick={() => setIsProfileMenuOpen(false)} 
+                aria-hidden="true"
+              />
+              <div className="absolute right-0 sm:right-0 top-full z-20 mt-3 w-[min(18rem,calc(100vw-2rem))] overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-[0_20px_60px_rgba(15,23,42,0.18)]">
+                <div className="border-b border-slate-100 px-5 py-4">
+                  <p className="font-medium text-slate-900">{session.user?.name || "User"}</p>
+                  <p className="mt-1 text-sm text-slate-500">{session.user?.email || "No email available"}</p>
+                </div>
+                <div className="p-3">
+                  <button
+                    type="button"
+                    onClick={() => signOut({ callbackUrl: "/" })}
+                    className="w-full rounded-2xl px-4 py-3 text-left text-sm font-medium text-rose-600 bg-rose-50 transition hover:bg-rose-100 cursor-pointer"
+                  >
+                    Logout
+                  </button>
+                </div>
               </div>
-              <div className="p-3">
-                <button
-                  type="button"
-                  onClick={() => signOut({ callbackUrl: "/" })}
-                  className="w-full rounded-2xl px-4 py-3 text-left text-sm font-medium text-rose-600 bg-rose-50 transition hover:bg-rose-100 cursor-pointer"
-                >
-                  Logout
-                </button>
-              </div>
-            </div>
+            </>
           ) : null}
         </div>
       </div>
 
-      <section className="grid gap-3 sm:grid-cols-2 md:gap-4 xl:grid-cols-4">
-        <MetricCard title="Monthly spend" value={currency(analyticsQuery.data?.overview.currentExpenseTotal || 0)} />
-        <MetricCard title="Monthly income" value={currency(analyticsQuery.data?.overview.currentIncomeTotal || 0)} />
+      <section className="order-2 grid grid-cols-2 gap-3 md:gap-4 xl:grid-cols-4">
+        <MetricCard 
+          title="Monthly spend" 
+          value={currency(analyticsQuery.data?.overview.currentExpenseTotal || 0)} 
+          onAddClick={() => document.getElementById("add-expense")?.scrollIntoView({ behavior: "smooth" })}
+          viewHref="/expenses"
+          actionColor="rose"
+        />
+        <MetricCard 
+          title="Monthly income" 
+          value={currency(analyticsQuery.data?.overview.currentIncomeTotal || 0)} 
+          onAddClick={() => document.getElementById("add-income")?.scrollIntoView({ behavior: "smooth" })}
+          viewHref="/incomes"
+          actionColor="teal"
+        />
         <MetricCard title="Savings rate" value={`${analyticsQuery.data?.overview.savingsRate || 0}%`} />
         <MetricCard title="Spend change" value={`${analyticsQuery.data?.overview.expenseChange || 0}%`} />
       </section>
 
-      <section className="grid gap-6 xl:grid-cols-2">
+      <section className="order-4 lg:order-3 grid gap-6 xl:grid-cols-2">
         <div className="rounded-[1.5rem] border border-slate-200 bg-white p-4 shadow-sm sm:rounded-[2rem] sm:p-6 xl:col-span-2">
           <div className="mb-6 flex items-center justify-between">
             <div>
@@ -293,8 +312,8 @@ export function DashboardClient() {
         />
       </section>
 
-      <section className="grid gap-4 lg:grid-cols-3 lg:gap-6">
-        <FormCard title="Add expense" subtitle="Attach a receipt now or later.">
+      <section className="order-3 lg:order-4 grid gap-4 lg:grid-cols-3 lg:gap-6">
+        <FormCard id="add-expense" title="Add expense" subtitle="Attach a receipt now or later.">
           <form onSubmit={handleExpenseSubmit} className="grid gap-3">
             <input name="amount" type="number" step="0.01" placeholder="Amount" className="input" required />
             <select name="category" className="input" defaultValue="Food">
@@ -304,7 +323,7 @@ export function DashboardClient() {
                 </option>
               ))}
             </select>
-            <input name="description" placeholder="Description" className="input" />
+            <textarea name="description" placeholder="Description" className="input resize-none" rows={2} />
             <input name="date" type="date" className="input" />
             <input type="file" accept="image/*" onChange={(event) => setExpenseReceipt(event.target.files?.[0] || null)} className="block w-full min-w-0 overflow-hidden rounded-xl border border-slate-300 bg-gray-100 px-3 py-2 text-sm text-slate-500" />
             {expenseError ? <p className="text-sm text-rose-600">{expenseError}</p> : null}
@@ -314,11 +333,11 @@ export function DashboardClient() {
           </form>
         </FormCard>
 
-        <FormCard title="Add income" subtitle="Track salaries, freelance work, or other inflows.">
+        <FormCard id="add-income" title="Add income" subtitle="Track salaries, freelance work, or other inflows.">
           <form onSubmit={handleIncomeSubmit} className="grid gap-3">
             <input name="amount" type="number" step="0.01" placeholder="Amount" className="input" required />
             <input name="source" placeholder="Source" className="input" required />
-            <input name="description" placeholder="Description" className="input" />
+            <textarea name="description" placeholder="Description" className="input resize-none" rows={2} />
             <input name="date" type="date" className="input" />
             <input type="file" accept="image/*,.pdf,.doc,.docx" onChange={(event) => setIncomeReceipt(event.target.files?.[0] || null)} className="block w-full min-w-0 overflow-hidden rounded-xl border border-slate-300 bg-gray-100 px-3 py-2 text-sm text-slate-500" />
             {incomeError ? <p className="text-sm text-rose-600">{incomeError}</p> : null}
@@ -328,7 +347,7 @@ export function DashboardClient() {
           </form>
         </FormCard>
 
-        <FormCard title="Set budget" subtitle="Keep category spending under control.">
+        <FormCard id="set-budget" title="Set budget" subtitle="Keep category spending under control.">
           <form onSubmit={handleBudgetSubmit} className="grid gap-3">
             <select name="category" className="input" defaultValue="Food">
               {categories.map((category) => (
@@ -353,7 +372,7 @@ export function DashboardClient() {
         </FormCard>
       </section>
 
-      <section className="grid gap-4 lg:grid-cols-2 xl:grid-cols-[1.2fr_1fr_1fr] xl:gap-6">
+      <section className="order-5 grid gap-4 lg:grid-cols-2 xl:grid-cols-[1.2fr_1fr_1fr] xl:gap-6">
         <InfoCard title="AI-style insights">
           <div className="grid gap-3">
             {(analyticsQuery.data?.insights || []).map((insight) => (
@@ -411,7 +430,7 @@ export function DashboardClient() {
         </InfoCard>
       </section>
 
-      <section className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
+      <section className="order-6 rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
         <div className="mb-4">
           <p className="text-sm uppercase tracking-[0.25em] text-teal-700">Budgets</p>
           <h2 className="text-xl font-semibold text-slate-900">Monthly progress</h2>
@@ -443,11 +462,30 @@ export function DashboardClient() {
   );
 }
 
-function MetricCard({ title, value }: { title: string; value: string }) {
+function MetricCard({ title, value, onAddClick, viewHref, actionColor = "rose" }: { title: string; value: string; onAddClick?: () => void; viewHref?: string; actionColor?: "rose" | "teal" }) {
+  const colorClass = actionColor === "rose" ? "text-rose-600 border-rose-600 hover:bg-rose-50" : "text-teal-600 border-teal-600 hover:bg-teal-50";
   return (
     <div className="min-w-0 rounded-[1.5rem] border border-slate-200 bg-white p-4 shadow-sm sm:rounded-[1.75rem] sm:p-5">
-      <p className="text-sm text-slate-500">{title}</p>
-      <p className="mt-3 break-words text-2xl font-semibold text-slate-900 sm:text-3xl">{value}</p>
+      <div className="flex justify-between items-start h-full">
+        <div className="flex flex-col justify-between h-full">
+          <p className="text-sm text-slate-500">{title}</p>
+          <p className="mt-3 break-words text-lg font-semibold text-slate-900 sm:text-2xl lg:text-3xl">{value}</p>
+        </div>
+        {(onAddClick || viewHref) && (
+          <div className="flex flex-col gap-2 shrink-0 ml-1">
+            {onAddClick && (
+              <button type="button" onClick={onAddClick} className={`rounded-full border flex items-center justify-center h-6 w-6 sm:h-8 sm:w-8 transition ${colorClass}`}>
+                <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
+              </button>
+            )}
+            {viewHref && (
+              <Link href={viewHref} className={`rounded-full border flex items-center justify-center h-6 w-6 sm:h-8 sm:w-8 transition ${colorClass}`}>
+                <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
+              </Link>
+            )}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
@@ -551,14 +589,16 @@ function DistributionCard({
 function FormCard({
   title,
   subtitle,
+  id,
   children,
 }: {
   title: string;
   subtitle: string;
+  id?: string;
   children: ReactNode;
 }) {
   return (
-    <div className="min-w-0 rounded-[1.5rem] border border-slate-200 bg-white p-4 shadow-sm sm:rounded-[2rem] sm:p-5">
+    <div id={id} className="min-w-0 rounded-[1.5rem] border border-slate-200 bg-white p-4 shadow-sm sm:rounded-[2rem] sm:p-5 scroll-mt-24">
       <h2 className="text-lg font-semibold text-slate-900">{title}</h2>
       <p className="mt-1 text-sm text-slate-500">{subtitle}</p>
       <div className="mt-4">{children}</div>
