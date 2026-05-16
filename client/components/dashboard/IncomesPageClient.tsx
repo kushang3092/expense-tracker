@@ -146,7 +146,9 @@ export function IncomesPageClient() {
     }
   }, [token]);
 
-  if (status === "loading" || (!token && !showTokenError)) {
+  const isLoadingData = incomesQuery.isLoading;
+
+  if (status === "loading" || (!token && !showTokenError) || isLoadingData) {
     return <Loader message="Loading incomes..." />;
   }
 

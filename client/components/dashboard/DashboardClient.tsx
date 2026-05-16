@@ -193,7 +193,15 @@ export function DashboardClient() {
     }
   }, [token]);
 
-  if (status === "loading" || (!token && !showTokenError)) {
+  const isLoadingData =
+    analyticsQuery.isLoading ||
+    categoryDistributionQuery.isLoading ||
+    incomeSourceDistributionQuery.isLoading ||
+    expensesQuery.isLoading ||
+    incomeQuery.isLoading ||
+    budgetsQuery.isLoading;
+
+  if (status === "loading" || (!token && !showTokenError) || isLoadingData) {
     return <Loader message="Loading dashboard..." />;
   }
 

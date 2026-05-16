@@ -158,7 +158,9 @@ export function ExpensesPageClient() {
     }
   }, [token]);
 
-  if (status === "loading" || (!token && !showTokenError)) {
+  const isLoadingData = expensesQuery.isLoading;
+
+  if (status === "loading" || (!token && !showTokenError) || isLoadingData) {
     return <Loader message="Loading expenses..." />;
   }
 
