@@ -1,4 +1,5 @@
 import { getServerSession } from "next-auth";
+import Image from "next/image";
 import Link from "next/link";
 
 import { AuthPanel } from "@/components/auth/AuthPanel";
@@ -26,22 +27,25 @@ export default async function Home() {
     <main className="min-h-screen overflow-hidden bg-[radial-gradient(circle_at_top_left,#fef3c7,transparent_22%),radial-gradient(circle_at_top_right,#bfdbfe,transparent_26%),linear-gradient(180deg,#f8fafc_0%,#ecfeff_55%,#f8fafc_100%)] px-3 py-4 sm:px-4 sm:py-6 md:px-8 md:py-8">
       <div className="mx-auto max-w-7xl min-w-0">
         <div className="flex flex-col gap-3 rounded-3xl border border-white/60 bg-white/70 px-4 py-3 shadow-sm backdrop-blur sm:flex-row sm:items-center sm:justify-between sm:rounded-full sm:px-5">
-          <div className="min-w-0">
-            <p className="font-[family-name:var(--font-space-grotesk)] text-lg font-semibold text-slate-900">
-              Xpense Tracker
-            </p>
-            <p className="text-sm text-slate-500">Personal finance SaaS with smart analytics</p>
+          <div className="flex items-center gap-3 min-w-0">
+            <Image src="/logo.png" alt="Xpense Tracker Logo" width={48} height={48} className="h-10 w-10 sm:h-12 sm:w-12 shrink-0 object-contain" />
+            <div className="min-w-0">
+              <p className="font-[family-name:var(--font-space-grotesk)] text-lg font-semibold text-slate-900">
+                Xpense Tracker
+              </p>
+              <p className="text-sm text-slate-500 hidden sm:block">Personal finance SaaS with smart analytics</p>
+            </div>
           </div>
           <Link
             href={session ? "/dashboard" : "#auth"}
-            className="inline-flex w-full justify-center rounded-full bg-slate-900 px-4 py-2 text-sm font-medium text-white sm:w-auto"
+            className="hidden sm:inline-flex w-full justify-center rounded-full bg-slate-900 px-4 py-2 text-sm font-medium text-white sm:w-auto"
           >
             {session ? "Open dashboard" : "Get started"}
           </Link>
         </div>
 
-        <section className="grid gap-8 pb-8 pt-10 md:pb-10 md:pt-14 lg:grid-cols-[minmax(0,1.1fr)_minmax(320px,0.9fr)] lg:items-center">
-          <div className="min-w-0">
+        <section className="grid flex-col gap-8 pb-8 pt-10 md:pb-10 md:pt-14 lg:grid-cols-[minmax(0,1.1fr)_minmax(320px,0.9fr)] lg:items-center">
+          <div className="min-w-0 order-2 lg:order-1">
             <p className="text-xs uppercase tracking-[0.24em] text-teal-700 sm:text-sm sm:tracking-[0.35em]">Smart analytics for your money</p>
             <h1 className="mt-4 max-w-3xl font-[family-name:var(--font-space-grotesk)] text-4xl font-bold leading-tight text-slate-950 sm:text-5xl md:text-6xl">
               Understand where your money goes and what to change next.
@@ -84,7 +88,7 @@ export default async function Home() {
             </div>
           </div>
 
-          <div id="auth" className="min-w-0">
+          <div id="auth" className="min-w-0 order-1 lg:order-2">
             <AuthPanel />
           </div>
         </section>

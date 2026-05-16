@@ -191,12 +191,18 @@ export function DashboardClient() {
   return (
     <div className="flex flex-col min-w-0 gap-6 md:gap-8">
       <div className="order-1 flex flex-row items-center justify-between gap-4 rounded-[1.5rem] bg-slate-900 px-4 py-5 text-white shadow-[0_30px_80px_rgba(15,23,42,0.25)] sm:rounded-[2rem] sm:px-6 sm:py-6">
-        <div className="min-w-0">
-          <p className="text-xs uppercase tracking-[0.22em] text-teal-300 sm:text-sm sm:tracking-[0.3em]">Xpense Tracker</p>
-          {/* <h1 className="mt-2 text-2xl font-semibold sm:text-3xl">Welcome back, {session.user?.name || "there"}.</h1> */}
-          <p className="mt-2 max-w-2xl text-sm text-slate-300">
-            Monitor spending, income, budgets, receipts, and monthly trends from one dashboard.
-          </p>
+        <div className="flex items-center gap-3 min-w-0">
+          <Image src="/logo.png" alt="Xpense Tracker Logo" width={40} height={40} className="h-8 w-8 sm:h-10 sm:w-10 shrink-0 object-contain" />
+          <div className="min-w-0">
+            <p className="text-xs uppercase tracking-[0.22em] text-teal-300 sm:text-sm sm:tracking-[0.3em]">Xpense Tracker</p>
+            {/* <h1 className="mt-2 text-2xl font-semibold sm:text-3xl">Welcome back, {session.user?.name || "there"}.</h1> */}
+            <p className="mt-2 max-w-2xl text-sm text-slate-300 hidden sm:block">
+              Monitor spending, income, budgets, receipts, and monthly trends from one dashboard.
+            </p>
+            <p className="mt-1 max-w-2xl text-xs text-slate-300 sm:hidden">
+              Monitor spending, income & budgets.
+            </p>
+          </div>
         </div>
         <div className="relative shrink-0">
           <button

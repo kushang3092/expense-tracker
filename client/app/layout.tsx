@@ -18,6 +18,9 @@ const spaceGrotesk = Space_Grotesk({
 export const metadata: Metadata = {
   title: "Xpense Tracker",
   description: "Smart expense tracking with budgets, receipts, and monthly analytics.",
+  icons: {
+    icon: "/logo.png",
+  },
 };
 
 export default function RootLayout({
