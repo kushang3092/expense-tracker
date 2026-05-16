@@ -30,7 +30,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${outfit.variable} ${spaceGrotesk.variable} antialiased`}>
+      <body suppressHydrationWarning className={`${outfit.variable} ${spaceGrotesk.variable} antialiased`}>
         <AppProviders>{children}</AppProviders>
       </body>
     </html>

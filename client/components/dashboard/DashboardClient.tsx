@@ -3,7 +3,8 @@
 import Link from "next/link";
 import { signOut, useSession } from "next-auth/react";
 import type { FormEvent, ReactNode } from "react";
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
+import { Loader } from "@/components/ui/Loader";
 import {
   Cell,
   Line,
@@ -184,8 +185,20 @@ export function DashboardClient() {
   const latestIncome = useMemo(() => incomeQuery.data?.income?.slice(0, 5) || [], [incomeQuery.data?.income]);
   const availableCategories = useMemo(() => ["All", ...categories], []);
 
+  const [showTokenError, setShowTokenError] = useState(false);
+  useEffect(() => {
+    if (!token) {
+      const timer = setTimeout(() => setShowTokenError(true), 10000);
+      return () => clearTimeout(timer);
+    }
+  }, [token]);
+
+  if (status === "loading" || (!token && !showTokenError)) {
+    return <Loader message="Loading dashboard..." />;
+  }
+
   if (!token) {
-    return <p className="text-sm text-slate-500">Your session is missing a backend token. Sign in again.</p>;
+    return <p className="text-sm text-slate-500 text-center mt-8">Your session is missing a backend token. Sign in again.</p>;
   }
 
   return (
